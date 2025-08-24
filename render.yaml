@@ -11,7 +11,7 @@ services:
       - fromGroup: aics-backend
 
 # Define the PostgreSQL database used by the backend. Render will generate
-# sensible defaults for database name and user based on the service name.
+          # sensible defaults for database name and user based on the service name.
 databases:
   - name: aics-db
     plan: free
