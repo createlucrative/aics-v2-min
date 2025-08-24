@@ -1,0 +1,36 @@
+services:
+  # Backend web service for the Aquaponics Intelligence Control System
+  - type: web
+    name: aics-backend
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port 10000
+    envVars:
+      # Inject variables from the environment group defined below
+      - fromGroup: aics-backend
+
+# Define the PostgreSQL database used by the backend. Render will generate
+# sensible defaults for database name and user based on the service name.
+databases:
+  - name: aics-db
+    plan: free
+
+# Environment variable group shared with services. Sensitive values are
+# generated automatically by Render when the Blueprint is applied.
+envVarGroups:
+  - name: aics-backend
+    envVars:
+      # The connection string is pulled from the database defined above.
+      - key: DATABASE_URL
+        fromDatabase:
+          name: aics-db
+          property: connectionString
+      # API key used to authenticate ingestion requests. Render will generate
+      # a secure value for this key.
+      - key: AICS_INGEST_API_KEY
+        generateValue: true
+      # General‑purpose secret for cryptographic operations. This isn't used
+      # directly in the starter backend but is included for future expansion.
+      - key: SECRET_KEY
+        generateValue: true
